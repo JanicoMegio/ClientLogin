@@ -4,6 +4,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import BgPng from './assets/images/bg-design 2.png';
 import Footer from './components/Footer.tsx';
 
+
 function App() {
 
   const theme = createTheme({
