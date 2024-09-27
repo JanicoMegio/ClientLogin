@@ -1,21 +1,28 @@
 import * as React from 'react';
 import { Box, Typography, TextField, Button, Link } from '@mui/material';
 
-export default function ForgetPasswordCard() {
+interface ForgetPasswordCardProps {
+    onToggle: () => void;
+    onOtpView: () => void;
+}
+
+export default function ForgetPasswordCard({ onToggle, onOtpView }: ForgetPasswordCardProps) {
     const [email, setEmail] = React.useState('');
-    
-    const handleEmailChange = (event) => {
+
+    const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(event.target.value);
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         console.log('Email:', email);
+        onOtpView()
+        
     };
 
     return (
-        <Box sx={{ p: 3, border: '1px solid #ccc', borderRadius: '8px', width: '300px', margin: 'auto' }}>
-            <Typography variant="h5" gutterBottom>
+        <Box>
+            <Typography variant="h4" sx={{ mb: 2 }} gutterBottom>
                 Forget Password
             </Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
@@ -35,7 +42,9 @@ export default function ForgetPasswordCard() {
                 </Button>
             </form>
             <Typography variant="body2" sx={{ mt: 2 }}>
-                <Link href="#">Back to Login</Link>
+                <Link href="#" onClick={onToggle}>
+                    Back to Login
+                </Link>
             </Typography>
         </Box>
     );

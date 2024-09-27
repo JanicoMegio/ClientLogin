@@ -1,7 +1,14 @@
 import * as React from 'react';
-import { Box, Typography, Button, Grid } from '@mui/material';
+import { Box, Typography, Button, Grid, Link } from '@mui/material';
 
-export default function OTPCard() {
+
+interface OTPprops{
+    onForgetPassword: () => void;
+    onResetPassword: () => void;
+}
+
+export default function OTPCard({onForgetPassword, onResetPassword}:OTPprops) {
+
     const [otp, setOtp] = React.useState(['', '', '', '', '']);
     const [countdown, setCountdown] = React.useState(30);
     const [isCountdownActive, setIsCountdownActive] = React.useState(false);
@@ -36,6 +43,7 @@ export default function OTPCard() {
         event.preventDefault();
         console.log('OTP:', otp.join(''));
         // Here you can add logic to verify the OTP
+        onResetPassword();
     };
 
     const handleResendOtp = () => {
@@ -45,9 +53,9 @@ export default function OTPCard() {
     };
 
     return (
-        <Box sx={{ p: 3, border: '1px solid #ccc', borderRadius: '8px', width: '350px', margin: 'auto' }}>
-            <Typography variant="h5" gutterBottom>
-                Enter OTP
+        <Box>
+            <Typography variant="h5" sx={{ mb: 5}} gutterBottom>
+                Enter Security Code
             </Typography>
             <form onSubmit={handleSubmit}>
                 <Grid container spacing={1} justifyContent="center">
@@ -72,11 +80,7 @@ export default function OTPCard() {
                         </Grid>
                     ))}
                 </Grid>
-                <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
-                    Verify OTP
-                </Button>
-            </form>
-            <Typography variant="body2" sx={{ mt: 2 }}>
+                <Typography variant="body2" sx={{ mt: 2, textAlign: 'center' }}>
                 {isCountdownActive ? (
                     <span>Resend OTP in {countdown} seconds</span>
                 ) : (
@@ -85,6 +89,13 @@ export default function OTPCard() {
                     </Button>
                 )}
             </Typography>
+            <Box sx={{ textAlign: 'end', mt: 2}}>
+                <Button variant='outlined' onClick={onForgetPassword} sx={{ mx: 2}}>Cancel</Button>
+                <Button type="submit" variant="contained" color="primary">
+                    Verify OTP
+                </Button>
+            </Box>
+            </form>
         </Box>
     );
 }

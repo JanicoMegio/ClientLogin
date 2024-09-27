@@ -6,13 +6,13 @@ import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
 
 interface LoginCardProps {
-    onToggle: () => void; 
+    onToggle: () => void;
+    onForgetPassword: () => void;
 }
 
-export default function LoginCard({ onToggle }: LoginCardProps) {
+export default function LoginCard({ onToggle, onForgetPassword }: LoginCardProps) {
     const [login, setLogin] = React.useState('');
     const [password, setPassword] = React.useState('');
-
     const handleLoginChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setLogin(event.target.value);
     };
@@ -33,8 +33,10 @@ export default function LoginCard({ onToggle }: LoginCardProps) {
                 Login
             </Typography>
             <Typography>
-                Don't have an account?  
-                <Link href="#" variant="body1" onClick={onToggle}> Sign up </Link>
+                Don't have an account?{' '}
+                <Link href="#" variant="body1" onClick={onToggle}>
+                    Sign up
+                </Link>
             </Typography>
             <form onSubmit={handleSubmit}>
                 <TextField
@@ -55,17 +57,11 @@ export default function LoginCard({ onToggle }: LoginCardProps) {
                     sx={{ marginBottom: 2 }}
                 />
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
-                    <Link href="#" variant="body2">
+                    <Link href="#" variant="body2" onClick={onForgetPassword}>
                         Forgot password?
                     </Link>
                 </Box>
-                <Button 
-                    type="submit" 
-                    variant="contained" 
-                    color="primary" 
-                    fullWidth
-                    sx={{ marginTop: 2 }}
-                >
+                <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
                     Login
                 </Button>
             </form>
