@@ -34,12 +34,8 @@ const steps = [
     },
     {
         label: 'Confirm Email and Phone Number',
-        description: `Set a password for your account.`,
-        type: 'form',
-        fields: [
-            { label: 'Email Address', type: 'button', value: '' },
-            { label: 'Mobile ', type: 'button', value: '' },
-        ]
+        description: `Please confirm your email or mobile number.`,
+        type: 'buttons'
     },
     {
         label: 'Complete Address',
@@ -92,7 +88,8 @@ type FormValuesType = {
     state: string;
     postalCode: string;
     termsAccepted: boolean;
-    [key: string]: string | boolean;
+    confirmationMethod: 'email' | 'mobile' | '';
+    [key: string]: string | boolean | undefined;
 };
 
 export default function Signup({ onToggle }: SignupProps) {
@@ -113,22 +110,20 @@ export default function Signup({ onToggle }: SignupProps) {
         city: '',
         state: '',
         postalCode: '',
-        termsAccepted: false
+        termsAccepted: false,
+        confirmationMethod: '' // Added to track the confirmation method
     });
 
     const [showSuccessModal, setShowSuccessModal] = React.useState(false);
     const [showVerificationCodeField, setShowVerificationCodeField] = React.useState(false);
 
     const handleNext = () => {
-        if (activeStep === 2) {
-            // Show the verification code field on the third step
+        if (activeStep === 2 && showVerificationCodeField) {
+            // If on confirmation step and the verification code is shown, move to the next step
+            setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        } else if (activeStep === 2) {
+            // Just show verification code input field
             setShowVerificationCodeField(true);
-        } else if (activeStep === steps.length - 1) {
-            setShowSuccessModal(true);
-            setTimeout(() => {
-                setShowSuccessModal(false);
-                onToggle();
-            }, 3000);
         } else {
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
         }
@@ -160,7 +155,8 @@ export default function Signup({ onToggle }: SignupProps) {
             city: '',
             state: '',
             postalCode: '',
-            termsAccepted: false
+            termsAccepted: false,
+            confirmationMethod: ''
         });
     };
 
@@ -170,6 +166,19 @@ export default function Signup({ onToggle }: SignupProps) {
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }));
+    };
+
+    const handleConfirmation = (method: 'email' | 'mobile') => {
+        setFormValues((prev) => ({ ...prev, confirmationMethod: method }));
+        setShowVerificationCodeField(true);
+        
+    };
+
+    const handleVerificationCodeSubmit = () => {
+        if (formValues.verificationCode) {
+            setActiveStep((prevActiveStep) => prevActiveStep + 1); // Move to next step after verification code submission
+            setShowVerificationCodeField(false); // Hide verification code field after moving to next step
+        }
     };
 
     return (
@@ -182,7 +191,7 @@ export default function Signup({ onToggle }: SignupProps) {
                             {step.label}
                         </StepLabel>
                         <StepContent>
-                            {step.type === 'buttons' && (
+                            {step.type === 'buttons' && activeStep === 0 && ( // First step buttons
                                 <Box>
                                     <Button
                                         variant="contained"
@@ -201,35 +210,39 @@ export default function Signup({ onToggle }: SignupProps) {
                                     </Button>
                                 </Box>
                             )}
+                            {step.type === 'buttons' && activeStep === 2 && (
+                                <Box>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        sx={{ mx: 2 }}
+                                        onClick={() => handleConfirmation('email')} 
+                                    >
+                                        Email Address
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => handleConfirmation('mobile')} 
+                                    >
+                                        Mobile
+                                    </Button>
+                                </Box>
+                            )}
                             {step.type === 'form' && step.fields && (
                                 <Box component="form">
-                                    {step.fields.map((field, fieldIndex) => {
-                                        if (field.type === 'button') {
-                                            return (
-                                                <Button
-                                                    key={fieldIndex}
-                                                    variant="outlined"
-                                                    sx={{ mb: 2, mr: 1 }}
-                                                    onClick={() => handleInputChange({ target: { name: field.label.toLowerCase().replace(' ', ''), value: 'Clicked' } } as any)} // Simulate button click
-                                                >
-                                                    {field.label}
-                                                </Button>
-                                            );
-                                        } else {
-                                            return (
-                                                <TextField
-                                                    key={fieldIndex}
-                                                    label={field.label}
-                                                    type={field.type}
-                                                    name={field.label.toLowerCase().replace(' ', '')} // Convert label to lowercase and remove spaces for name
-                                                    value={formValues[field.label.toLowerCase().replace(' ', '')] as string} // Type assertion
-                                                    onChange={handleInputChange}
-                                                    fullWidth
-                                                    sx={{ mb: 2 }}
-                                                />
-                                            );
-                                        }
-                                    })}
+                                    {step.fields.map((field, fieldIndex) => (
+                                        <TextField
+                                            key={fieldIndex}
+                                            label={field.label}
+                                            type={field.type}
+                                            name={field.label.toLowerCase().replace(' ', '')}
+                                            value={formValues[field.label.toLowerCase().replace(' ', '')] as string}
+                                            onChange={handleInputChange}
+                                            fullWidth
+                                            sx={{ mb: 2 }}
+                                        />
+                                    ))}
                                     {showVerificationCodeField && (
                                         <TextField
                                             label="Verification Code"
@@ -240,14 +253,14 @@ export default function Signup({ onToggle }: SignupProps) {
                                             fullWidth
                                             sx={{ mb: 2 }}
                                         />
-                                     
                                     )}
                                     <Button
                                         variant="contained"
-                                        onClick={handleNext}
+                                        onClick={showVerificationCodeField ? handleVerificationCodeSubmit : handleNext}
                                         sx={{ mt: 1, mr: 1 }}
+                                        disabled={activeStep === 2 && !showVerificationCodeField} // Disable if no verification code shown
                                     >
-                                        {index === steps.length - 1 ? 'Finish' : 'Continue'}
+                                        Continue
                                     </Button>
                                     <Button
                                         disabled={index === 0}
@@ -259,33 +272,16 @@ export default function Signup({ onToggle }: SignupProps) {
                                 </Box>
                             )}
                             {step.type === 'checkbox' && (
-                                <Box>
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox
-                                                name="termsAccepted"
-                                                checked={formValues.termsAccepted as boolean}
-                                                onChange={handleInputChange}
-                                            />
-                                        }
-                                        label={step.checkboxLabel}
-                                    />
-                                    <Button
-                                        variant="contained"
-                                        onClick={handleNext}
-                                        disabled={!formValues.termsAccepted}
-                                        sx={{ mt: 1, mr: 1 }}
-                                    >
-                                        {index === steps.length - 1 ? 'Finish' : 'Continue'}
-                                    </Button>
-                                    <Button
-                                        disabled={index === 0}
-                                        onClick={handleBack}
-                                        sx={{ mt: 1, mr: 1 }}
-                                    >
-                                        Back
-                                    </Button>
-                                </Box>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={formValues.termsAccepted}
+                                            onChange={handleInputChange}
+                                            name="termsAccepted"
+                                        />
+                                    }
+                                    label={step.checkboxLabel}
+                                />
                             )}
                         </StepContent>
                     </Step>
