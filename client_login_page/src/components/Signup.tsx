@@ -27,7 +27,7 @@ const steps = [
             { label: 'First Name', type: 'text', value: '' },
             { label: 'Middle Name', type: 'text', value: '' },
             { label: 'Suffix', type: 'text', value: '' },
-            { label: 'Date of Birth', type: 'date', value: '' },
+            { label: '', type: 'date', value: '' },
             { label: 'Email', type: 'email', value: '' },
             { label: 'Mobile Number', type: 'text', value: '' }
         ]
@@ -111,7 +111,7 @@ export default function Signup({ onToggle }: SignupProps) {
         state: '',
         postalCode: '',
         termsAccepted: false,
-        confirmationMethod: '' // Added to track the confirmation method
+        confirmationMethod: ''
     });
 
     const [showSuccessModal, setShowSuccessModal] = React.useState(false);
@@ -193,7 +193,8 @@ export default function Signup({ onToggle }: SignupProps) {
 
     return (
         <Box >
-            <Typography variant='h4' sx={{ mb: 3 }}>Sign Up</Typography>
+            <Typography variant='h4' sx={{ mb: 3 }}>Sign Up  <Button onClick={onToggle}  sx={{ float: 'right'}}>Back</Button> </Typography>
+           
             <Stepper activeStep={activeStep} orientation="vertical">
                 {steps.map((step, index) => (
                     <Step key={step.label}>
