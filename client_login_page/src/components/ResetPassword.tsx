@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Typography, Box, TextField, Button, Modal, Backdrop, Fade } from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 interface ResetPasswordProps {
     onForgetPassword: () => void;
@@ -23,28 +24,26 @@ export default function ResetPassword({ onForgetPassword, onToggle }: ResetPassw
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        // Check if passwords match
         if (password !== confirmPassword) {
             setError('Passwords do not match');
             return;
         }
 
-        // Clear error and show modal on successful submission
         setError('');
         setShowModal(true);
         console.log('Password:', password);
         console.log('Confirm Password:', confirmPassword);
-        
-        // Auto-navigate to login after 4 seconds
+
+
         setTimeout(() => {
             handleCloseModal();
         }, 3000);
-        // Add logic to handle password reset here
+
     };
 
     const handleCloseModal = () => {
         setShowModal(false);
-        onToggle(); // Navigate to login after closing the modal
+        onToggle();
     };
 
     return (
@@ -93,28 +92,27 @@ export default function ResetPassword({ onForgetPassword, onToggle }: ResetPassw
                 }}
             >
                 <Fade in={showModal}>
-                    <Box sx={{ 
-                        bgcolor: 'white', 
-                        borderRadius: 2, 
-                        boxShadow: 24, 
-                        p: 4, 
-                        width: 300, 
+                    <Box sx={{
+                        bgcolor: 'white',
+                        borderRadius: 2,
+                        boxShadow: 24,
+                        p: 4,
+                        width: 400,
                         margin: 'auto',
                         position: 'absolute',
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        textAlign: 'center' 
+                        textAlign: 'center',
+                        color: '#00237D',
                     }}>
                         <Typography variant="h6" gutterBottom>
-                            Password Reset Successful!
+                        Password has changed successfully!
                         </Typography>
-                        <Typography variant="body2">
-                            You can now log in with your new password.
-                        </Typography>
-                        <Button onClick={handleCloseModal} variant="contained" sx={{ mt: 2 }}>
-                            Go to Login
+                        <Button onClick={handleCloseModal} sx={{ mt: 2 }}>
+                            <CheckCircleIcon sx={{ fontSize: 75 }} />
                         </Button>
+
                     </Box>
                 </Fade>
             </Modal>

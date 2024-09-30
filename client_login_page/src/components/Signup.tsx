@@ -119,11 +119,9 @@ export default function Signup({ onToggle }: SignupProps) {
 
     const handleNext = () => {
         if (activeStep === 2 && showVerificationCodeField) {
-            // If on confirmation step and the verification code is shown, move to the next step
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
-            setShowVerificationCodeField(false); // Hide verification field for the next steps
+            setShowVerificationCodeField(false); 
         } else if (activeStep === 2) {
-            // If on the confirmation step, but the code is not shown, show it
             setShowVerificationCodeField(true);
         } else {
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -181,12 +179,12 @@ export default function Signup({ onToggle }: SignupProps) {
 
 
     const handleSubmit = () => {
-        // Handle submission logic here, e.g., sending data to an API
-        setShowSuccessModal(true); // Show success modal
+        
+        setShowSuccessModal(true);
         setTimeout(() => {
-            setShowSuccessModal(false); // Close modal after 2 seconds
-            // Redirect to login page (replace with your actual routing logic)
-            window.location.href = '/login'; // Example redirect
+            setShowSuccessModal(false); 
+        
+            window.location.href = '/login';
         }, 1000);
     };
 
@@ -233,6 +231,7 @@ export default function Signup({ onToggle }: SignupProps) {
                                                     confirmationMethod: 'email'
                                                 }))}
                                                 name="confirmationMethodEmail"
+                                                disabled={showVerificationCodeField}
                                             />
                                         }
                                         label="Email Address"
@@ -247,12 +246,13 @@ export default function Signup({ onToggle }: SignupProps) {
                                                     confirmationMethod: 'mobile'
                                                 }))}
                                                 name="confirmationMethodMobile"
+                                                disabled={showVerificationCodeField}
                                             />
                                         }
                                         label="Mobile"
                                     />
 
-                                    {/* Show the verification code input if confirmation method is selected */}
+                                  
                                     {showVerificationCodeField && (
                                         <TextField
                                             label="Verification Code"
@@ -269,7 +269,7 @@ export default function Signup({ onToggle }: SignupProps) {
                                         <Button
                                             variant="contained"
                                             onClick={showVerificationCodeField ? handleVerificationCodeSubmit : handleNext}
-                                            disabled={!formValues.confirmationMethod} // Button is disabled until a selection is made
+                                            disabled={!formValues.confirmationMethod}
                                             sx={{ mr: 1 }}
                                         >
                                             {showVerificationCodeField ? 'Submit Verification Code' : 'Continue'}
