@@ -4,7 +4,6 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
-import Page404 from '../components/Page404.tsx';
 
 interface LoginCardProps {
     onToggle: () => void;
@@ -26,7 +25,6 @@ export default function LoginCard({ onToggle, onForgetPassword }: LoginCardProps
         event.preventDefault();
         console.log('Login:', login);
         console.log('Password:', password);
-        <Page404/>
     };
 
     return (

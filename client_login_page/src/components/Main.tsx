@@ -14,7 +14,6 @@ import Content from './Content';
 import ResetPassword from './ResetPassword';
 
 export default function Main() {
-    
     const [currentView, setCurrentView] = React.useState('signIn'); 
     const showSignIn = () => setCurrentView('signIn');
     const showSignUp = () => setCurrentView('signUp');
@@ -29,12 +28,15 @@ export default function Main() {
                 maxWidth="lg"
                 sx={{
                     display: 'flex',
+                    flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    height: '100vh',
+                    minHeight: '100vh',
+                    paddingBottom: '64px',
+                    paddingTop: '32px',
                 }}
             >
-                <Grid container justifyContent="center" alignItems="center">
+                <Grid container justifyContent="center" alignItems="center" sx={{ flexGrow: 1 }}>
                     <Grid item xs={12} sm={6} md={6} lg={6}>
                         <Box sx={{ marginBottom: { xs: 2, sm: 0 } }}>
                             <Content />

@@ -1,7 +1,34 @@
-import PageImage from '../assets/images/Error Page I.png'
+import Box from '@mui/material/Box';
+import ErrorIcon from '../assets/images/error2.png'
+import ErrorBackground from '../assets/images/error_page_1.png'
 
-export default function Page404(){
+export default function Page404() {
     return (
-        <img src={PageImage}/>
+        <Box
+            sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+                backgroundImage: `url(${ErrorBackground})`,
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                backgroundColor: '#ffffff',
+
+            }}
+        >
+            <Box
+                component="img"
+                src={ErrorIcon}
+                alt="Centered Image"
+                sx={{
+                    width: '600px',
+                    height: '600px',
+                    maxWidth: '100%',  
+                    maxHeight: '100%',  
+                    objectFit: 'contain', 
+                }}
+            />
+        </Box>
     );
 }

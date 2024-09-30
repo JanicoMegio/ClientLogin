@@ -9,12 +9,14 @@ import List from '@mui/material/List';
 import Avatar from '@mui/material/Avatar';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
+import Hidden from '@mui/material/Hidden';
 
 export default function Footer() {
     return (
-        <Grid container spacing={1} sx={{ bgcolor: '#ffffff', flexGrow: 1, p: 5 }}>
+        <Grid container spacing={1} sx={{ bgcolor: '#ffffff', flexGrow: 1, px: 5, py: 3}}>
             <Grid item xs={12}  md={6} lg={3}>
-                <Typography>Asialink Finance Corporation</Typography>
+                <Typography variant='h5'>Asialink Finance Corporation</Typography>
                 <Typography>SEC Registration No.: A199711768</Typography>
                 <br />
                 <Typography>CGFD 0967-365-7324 / 0926-017-0248</Typography>
@@ -22,19 +24,24 @@ export default function Footer() {
             </Grid>
 
             <Grid item xs={12} md={6} lg={7}>
-                <Typography>Advisory:</Typography>
+                <Typography variant='h5'>Advisory:</Typography>
                 <br />
+               
                 <Typography>
                     Welcome to Asialink Finance Corporation’s portal. By accessing this website, you agree to be governed by the Terms and Conditions and Data Privacy Policy herein set forth. If you find the Terms and Conditions and Data Privacy Policy unacceptable, kindly discontinue accessing this website. We advise you to study the Terms and Conditions in the disclosure statements before proceeding with the loan transaction.
                 </Typography>
             </Grid>
 
-            <Grid item sm={6} lg={2} sx={{ textAlign: 'center' }}>
-                <img src={DPO} style={{ maxWidth: '100px', maxHeight: '150px', width: '100%', height: '100%' }} alt="DPO Logo" />
+            <Grid item xs={12} sm={6} md={6} lg={2} sx={{ textAlign: 'center' }}>
+                <img src={DPO} style={{ maxWidth: '110px', maxHeight: '165px', width: '100%', height: '100%' }} alt="DPO Logo" />
             </Grid>
-
-            <Grid item sm={6} lg={3}>
-                <Box sx={{ p: 2, m: 1, height: '90px', width: '100%', bgcolor: '#00237D', textAlign: 'center' }}>
+            <Hidden only='sm'>
+                <Grid item xs={12}>
+                        <Divider sx={{ margin: '20px 0' }} />
+                </Grid>
+            </Hidden>
+            <Grid item xs={12} sm={6} md={6} lg={2}>
+                <Box sx={{ width: '100%', bgcolor: '#00237D', textAlign: 'center', p: 2}}>
                     <img src={Logo} style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto' }} alt="Company Logo" />
                 </Box>
                 <Grid
@@ -43,18 +50,23 @@ export default function Footer() {
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        gap: 3,
+                        gap: 4,
                         flexDirection: 'row',
+                        margin: '5px',
                     }}
                 >
-                    <FacebookRoundedIcon fontSize="medium" />
-                    <FacebookRoundedIcon fontSize="medium" />
-                    <FacebookRoundedIcon fontSize="medium" />
-                    <FacebookRoundedIcon fontSize="medium" />
+                    <FacebookRoundedIcon fontSize="large" />
+                    <FacebookRoundedIcon fontSize="large" />
+                    <FacebookRoundedIcon fontSize="large" />
+                    <FacebookRoundedIcon fontSize="large" />
                 </Grid>
             </Grid>
-
-            <Grid container item xs={12} sm={12} md={5}>
+            <Hidden only='xl'>
+                <Grid item xs={12}>
+                        <Divider sx={{ margin: '20px 0' }} />
+                </Grid>
+            </Hidden>
+            <Grid container item xs={12} sm={6} lg={4}>
                 <Grid item xs={6}>
                     <List>
                         <ListItem sx={{ paddingBottom: "0px" }}>
@@ -95,8 +107,8 @@ export default function Footer() {
                 </Grid>
             </Grid>
 
-            <Grid item xs={12} sm={12} md={4}>
-                <List sx={{ width: '100%', maxWidth: '400px', alignItems: 'center' }}>
+            <Grid item xs={12} sm={6} lg={4}>
+                <List sx={{ alignItems: 'center'}}>
                     <ListItem>
                         <ListItemAvatar>
                             <Avatar>
@@ -119,7 +131,7 @@ export default function Footer() {
                                 <FacebookRoundedIcon />
                             </Avatar>
                         </ListItemAvatar>
-                        <ListItemText primary="customerservices@asialinkfinance.com.ph" />
+                        <ListItemText  primary="customerservice&#8203;@asialinkfinance.com.ph"/>
                     </ListItem>
                 </List>
             </Grid>

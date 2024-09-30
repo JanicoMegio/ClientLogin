@@ -121,13 +121,15 @@ export default function Signup({ onToggle }: SignupProps) {
         if (activeStep === 2 && showVerificationCodeField) {
             // If on confirmation step and the verification code is shown, move to the next step
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
+            setShowVerificationCodeField(false); // Hide verification field for the next steps
         } else if (activeStep === 2) {
-            // Just show verification code input field
+            // If on the confirmation step, but the code is not shown, show it
             setShowVerificationCodeField(true);
         } else {
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
         }
     };
+
 
     const handleBack = () => {
         if (activeStep === 2) {
@@ -168,21 +170,29 @@ export default function Signup({ onToggle }: SignupProps) {
         }));
     };
 
-    const handleConfirmation = (method: 'email' | 'mobile') => {
-        setFormValues((prev) => ({ ...prev, confirmationMethod: method }));
-        setShowVerificationCodeField(true);
-        
-    };
-
     const handleVerificationCodeSubmit = () => {
         if (formValues.verificationCode) {
-            setActiveStep((prevActiveStep) => prevActiveStep + 1); // Move to next step after verification code submission
-            setShowVerificationCodeField(false); // Hide verification code field after moving to next step
+            setActiveStep((prevActiveStep) => prevActiveStep + 1);
+            setShowVerificationCodeField(false);
+        } else {
+            console.log("Verification code is required.");
         }
     };
 
+
+    const handleSubmit = () => {
+        // Handle submission logic here, e.g., sending data to an API
+        setShowSuccessModal(true); // Show success modal
+        setTimeout(() => {
+            setShowSuccessModal(false); // Close modal after 2 seconds
+            // Redirect to login page (replace with your actual routing logic)
+            window.location.href = '/login'; // Example redirect
+        }, 1000);
+    };
+
+
     return (
-        <Box sx={{ maxWidth: 400 }}>
+        <Box >
             <Typography variant='h4' sx={{ mb: 3 }}>Sign Up</Typography>
             <Stepper activeStep={activeStep} orientation="vertical">
                 {steps.map((step, index) => (
@@ -191,12 +201,12 @@ export default function Signup({ onToggle }: SignupProps) {
                             {step.label}
                         </StepLabel>
                         <StepContent>
-                            {step.type === 'buttons' && activeStep === 0 && ( // First step buttons
+                            {step.type === 'buttons' && activeStep === 0 && (
                                 <Box>
                                     <Button
                                         variant="contained"
                                         color="primary"
-                                        sx={{ mx: 2 }}
+                                        sx={{ mx: 2, mb: 2 }}
                                         onClick={handleNext}
                                     >
                                         Yes
@@ -205,6 +215,7 @@ export default function Signup({ onToggle }: SignupProps) {
                                         variant="contained"
                                         color="primary"
                                         onClick={handleNext}
+                                        sx={{ mx: 2, mb: 2 }}
                                     >
                                         No, I am a new customer.
                                     </Button>
@@ -212,23 +223,66 @@ export default function Signup({ onToggle }: SignupProps) {
                             )}
                             {step.type === 'buttons' && activeStep === 2 && (
                                 <Box>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        sx={{ mx: 2 }}
-                                        onClick={() => handleConfirmation('email')} 
-                                    >
-                                        Email Address
-                                    </Button>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={() => handleConfirmation('mobile')} 
-                                    >
-                                        Mobile
-                                    </Button>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={formValues.confirmationMethod === 'email'}
+                                                onChange={() => setFormValues((prev) => ({
+                                                    ...prev,
+                                                    confirmationMethod: 'email'
+                                                }))}
+                                                name="confirmationMethodEmail"
+                                            />
+                                        }
+                                        label="Email Address"
+                                    />
+
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={formValues.confirmationMethod === 'mobile'}
+                                                onChange={() => setFormValues((prev) => ({
+                                                    ...prev,
+                                                    confirmationMethod: 'mobile'
+                                                }))}
+                                                name="confirmationMethodMobile"
+                                            />
+                                        }
+                                        label="Mobile"
+                                    />
+
+                                    {/* Show the verification code input if confirmation method is selected */}
+                                    {showVerificationCodeField && (
+                                        <TextField
+                                            label="Verification Code"
+                                            type="text"
+                                            name="verificationCode"
+                                            value={formValues.verificationCode}
+                                            onChange={handleInputChange}
+                                            fullWidth
+                                            sx={{ mb: 2 }}
+                                        />
+                                    )}
+
+                                    <Box sx={{ mt: 2 }}>
+                                        <Button
+                                            variant="contained"
+                                            onClick={showVerificationCodeField ? handleVerificationCodeSubmit : handleNext}
+                                            disabled={!formValues.confirmationMethod} // Button is disabled until a selection is made
+                                            sx={{ mr: 1 }}
+                                        >
+                                            {showVerificationCodeField ? 'Submit Verification Code' : 'Continue'}
+                                        </Button>
+                                        <Button
+                                            onClick={handleBack}
+                                            sx={{ mr: 1 }}
+                                        >
+                                            Back
+                                        </Button>
+                                    </Box>
                                 </Box>
                             )}
+
                             {step.type === 'form' && step.fields && (
                                 <Box component="form">
                                     {step.fields.map((field, fieldIndex) => (
@@ -272,17 +326,42 @@ export default function Signup({ onToggle }: SignupProps) {
                                 </Box>
                             )}
                             {step.type === 'checkbox' && (
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={formValues.termsAccepted}
-                                            onChange={handleInputChange}
-                                            name="termsAccepted"
-                                        />
-                                    }
-                                    label={step.checkboxLabel}
-                                />
+                                <Box>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={formValues.termsAccepted}
+                                                onChange={handleInputChange}
+                                                name="termsAccepted"
+                                            />
+                                        }
+                                        label={step.checkboxLabel}
+                                    />
+                                    <Box sx={{ mt: 2 }}>
+                                        <Button
+                                            variant="contained"
+                                            onClick={() => {
+                                                if (formValues.termsAccepted) {
+                                                    // Handle successful submission
+                                                    handleSubmit() // Show success modal or other submission logic
+                                                } else {
+                                                    alert('You must accept the terms and conditions to proceed.');
+                                                }
+                                            }}
+                                            sx={{ mr: 1 }}
+                                        >
+                                            Submit
+                                        </Button>
+                                        <Button
+                                            onClick={handleBack}
+                                            sx={{ mr: 1 }}
+                                        >
+                                            Back
+                                        </Button>
+                                    </Box>
+                                </Box>
                             )}
+
                         </StepContent>
                     </Step>
                 ))}
@@ -294,9 +373,9 @@ export default function Signup({ onToggle }: SignupProps) {
                 </Paper>
             )}
             <Modal open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
-                <Box sx={{ p: 2, bgcolor: 'white', borderRadius: 1, maxWidth: 400, margin: 'auto', mt: '20%' }}>
+                <Box sx={{ p: 3, bgcolor: 'white', borderRadius: 3, maxWidth: 500, margin: 'auto', mt: '20%' }}>
                     <Typography variant="h6" component="h2">Signup Successful!</Typography>
-                    <Typography sx={{ mt: 2 }}>You can now log in with your credentials.</Typography>
+                    <Typography sx={{ mt: 2 }}>You can now log in</Typography>
                 </Box>
             </Modal>
         </Box>

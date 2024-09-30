@@ -1,33 +1,24 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Main from './components/Main.tsx';
 import CssBaseline from '@mui/material/CssBaseline';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import BgPng from './assets/images/bg-design 2.png';
+import { ThemeProvider } from '@mui/material/styles';
 import Footer from './components/Footer.tsx';
+import PageNotFound from './components/Page404.tsx'
+import theme from './components/Theme.ts'
+
 
 
 function App() {
-
-  const theme = createTheme({
-    components: {
-      MuiCssBaseline: {
-        styleOverrides: {
-          body: {
-            backgroundColor: '#00237D',
-            backgroundImage: `url(${BgPng})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-            height: '300px',
-            width: '100vw',
-          },
-        },
-      },
-    },
-  });
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline/>
-      <Main/>
-      <Footer/>
+      <CssBaseline />
+      <Router>
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+        <Footer/>
+      </Router>
     </ThemeProvider>
   )
 }
