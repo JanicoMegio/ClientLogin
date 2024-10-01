@@ -32,7 +32,6 @@ export default function OTPCard({onForgetPassword, onResetPassword}:OTPprops) {
             newOtp[index] = value;
             setOtp(newOtp);
 
-            // Move to the next input
             if (value && index < otp.length - 1) {
                 document.getElementById(`otp-input-${index + 1}`).focus();
             }

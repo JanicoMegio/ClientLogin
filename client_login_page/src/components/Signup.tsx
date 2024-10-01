@@ -11,6 +11,12 @@ import TextField from '@mui/material/TextField';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Modal from '@mui/material/Modal';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 const steps = [
     {
@@ -40,15 +46,17 @@ const steps = [
     {
         label: 'Complete Address',
         description: `Please provide your complete address.`,
-        type: 'form',
+        type: 'mixform',
         fields: [
-            { label: 'Address Line 1', type: 'text', value: '' },
-            { label: 'Address Line 2', type: 'text', value: '' },
-            { label: 'City', type: 'text', value: '' },
-            { label: 'State', type: 'text', value: '' },
-            { label: 'Postal Code', type: 'text', value: '' }
+            { label: 'Address Line 1', name: 'addressLine1', type: 'text', value: '' },
+            { label: 'Address Line 2', name: 'addressLine2', type: 'text', value: '' },
+            { label: 'City', name: 'city', type: 'text', value: '' },
+            { label: 'State', name: 'state', type: 'select', options: ['New Yorkssdsdsdssdsssss', 'California', 'Texas'], value: '' },
+            {label: 'Barangay', name: 'Brgy', type: 'select', options: ['Quiasdsao', 'Jalajala', 'Hulo'], value: ''},
+            { label: 'Postal Code', name: 'postalCode', type: 'text', value: '' }
         ]
     },
+
     {
         label: 'Set Username and Password',
         description: `Set a username and password for your account.`,
@@ -114,20 +122,28 @@ export default function Signup({ onToggle }: SignupProps) {
         confirmationMethod: ''
     });
 
+
+    const handleSelectChange = (event: SelectChangeEvent) => {
+        const { name, value } = event.target;
+        setFormValues((prevValues) => ({
+            ...prevValues,
+            [name]: value,
+        }));
+    };
+
     const [showSuccessModal, setShowSuccessModal] = React.useState(false);
     const [showVerificationCodeField, setShowVerificationCodeField] = React.useState(false);
 
     const handleNext = () => {
         if (activeStep === 2 && showVerificationCodeField) {
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
-            setShowVerificationCodeField(false); 
+            setShowVerificationCodeField(false);
         } else if (activeStep === 2) {
             setShowVerificationCodeField(true);
         } else {
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
         }
     };
-
 
     const handleBack = () => {
         if (activeStep === 2) {
@@ -161,10 +177,10 @@ export default function Signup({ onToggle }: SignupProps) {
     };
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, checked, type } = event.target;
-        setFormValues((prev) => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
+        const { name, value } = event.target;
+        setFormValues((prevValues) => ({
+            ...prevValues,
+            [name]: value,
         }));
     };
 
@@ -179,20 +195,18 @@ export default function Signup({ onToggle }: SignupProps) {
 
 
     const handleSubmit = () => {
-        
+
         setShowSuccessModal(true);
         setTimeout(() => {
-            setShowSuccessModal(false); 
-        
+            setShowSuccessModal(false);
             window.location.href = '/login';
-        }, 1000);
+        }, 2000);
     };
 
 
     return (
         <Box >
-            <Typography variant='h4' sx={{ mb: 3 }}>Sign Up  <Button onClick={onToggle}  sx={{ float: 'right'}}>Back</Button> </Typography>
-           
+            <Typography variant='h4' sx={{ mb: 3 }}>Sign Up  <Button onClick={onToggle} sx={{ float: 'right' }}>Back</Button> </Typography>
             <Stepper activeStep={activeStep} orientation="vertical">
                 {steps.map((step, index) => (
                     <Step key={step.label}>
@@ -252,7 +266,6 @@ export default function Signup({ onToggle }: SignupProps) {
                                         label="Mobile"
                                     />
 
-                                  
                                     {showVerificationCodeField && (
                                         <TextField
                                             label="Verification Code"
@@ -298,22 +311,11 @@ export default function Signup({ onToggle }: SignupProps) {
                                             sx={{ mb: 2 }}
                                         />
                                     ))}
-                                    {showVerificationCodeField && (
-                                        <TextField
-                                            label="Verification Code"
-                                            type="text"
-                                            name="verificationCode"
-                                            value={formValues.verificationCode}
-                                            onChange={handleInputChange}
-                                            fullWidth
-                                            sx={{ mb: 2 }}
-                                        />
-                                    )}
                                     <Button
                                         variant="contained"
                                         onClick={showVerificationCodeField ? handleVerificationCodeSubmit : handleNext}
                                         sx={{ mt: 1, mr: 1 }}
-                                        disabled={activeStep === 2 && !showVerificationCodeField} // Disable if no verification code shown
+                                        disabled={activeStep === 2 && !showVerificationCodeField}
                                     >
                                         Continue
                                     </Button>
@@ -326,6 +328,63 @@ export default function Signup({ onToggle }: SignupProps) {
                                     </Button>
                                 </Box>
                             )}
+
+                            {step.type === 'mixform' && step.fields && (
+                                <Box component="form">
+                                    {step.fields.map((field, fieldIndex) => (
+                                        field.type === 'select' ? (
+                                            <FormControl key={fieldIndex} sx={{ width: '100%', mb: 2 }}>
+                                                <InputLabel>{field.label}</InputLabel>
+                                                <Select
+                                                    name={field.label.toLowerCase().replace(' ', '')}
+                                                    value={formValues[field.label.toLowerCase().replace(' ', '')] as string}
+                                                    onChange={handleSelectChange}  
+                                                    autoWidth
+                                                    label={field.label}
+                                                >
+                                                    <MenuItem value="">
+                                                        <em>None</em>
+                                                    </MenuItem>
+                                                    {field.options?.map((option, optionIndex) => (
+                                                        <MenuItem  key={optionIndex} value={option}>
+                                                            {option}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        ) : (
+                                            <TextField
+                                                key={fieldIndex}
+                                                label={field.label}
+                                                type={field.type}
+                                                name={field.label.toLowerCase().replace(' ', '')}
+                                                value={formValues[field.label.toLowerCase().replace(' ', '')] as string}
+                                                onChange={handleInputChange}
+                                                fullWidth
+                                                sx={{ mb: 2 }}
+                                            />
+                                        )
+                                    ))}
+
+                                    <Button
+                                        variant="contained"
+                                        onClick={showVerificationCodeField ? handleVerificationCodeSubmit : handleNext}
+                                        sx={{ mt: 1, mr: 1 }}
+                                        disabled={activeStep === 2 && !showVerificationCodeField}
+                                    >
+                                        Continue
+                                    </Button>
+                                    <Button
+                                        disabled={activeStep === 0}
+                                        onClick={handleBack}
+                                        sx={{ mt: 1, mr: 1 }}
+                                    >
+                                        Back
+                                    </Button>
+                                </Box>
+                            )}
+
+
                             {step.type === 'checkbox' && (
                                 <Box>
                                     <FormControlLabel
@@ -343,8 +402,7 @@ export default function Signup({ onToggle }: SignupProps) {
                                             variant="contained"
                                             onClick={() => {
                                                 if (formValues.termsAccepted) {
-                                                    // Handle successful submission
-                                                    handleSubmit() // Show success modal or other submission logic
+                                                    handleSubmit()
                                                 } else {
                                                     alert('You must accept the terms and conditions to proceed.');
                                                 }
@@ -374,9 +432,11 @@ export default function Signup({ onToggle }: SignupProps) {
                 </Paper>
             )}
             <Modal open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
-                <Box sx={{ p: 3, bgcolor: 'white', borderRadius: 3, maxWidth: 500, margin: 'auto', mt: '20%' }}>
-                    <Typography variant="h6" component="h2">Signup Successful!</Typography>
+                <Box sx={{ p: 3, bgcolor: 'white', borderRadius: 3, maxWidth: 500, margin: 'auto', mt: '20%', textAlign: 'center' }}>
+                    <CheckCircleIcon sx={{ fontSize: 100, color: '#4caf50' }} />
+                    <Typography variant="h4" component="h2" sx={{ color: '#4caf50' }}>Success</Typography>
                     <Typography sx={{ mt: 2 }}>You can now log in</Typography>
+
                 </Box>
             </Modal>
         </Box>

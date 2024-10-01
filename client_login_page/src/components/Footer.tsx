@@ -21,9 +21,11 @@ import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import Hidden from '@mui/material/Hidden';
 
+
 export default function Footer() {
     return (
-        <Grid container spacing={1} sx={{ bgcolor: '#ffffff', flexGrow: 1, px: 5, py: 3 }}>
+        <Grid container spacing={1} sx={{ bgcolor: '#ffffff', flexGrow: 1, px: 5, py: 3, width: '100%'}}>
+        
             <Grid item xs={12} md={6} lg={3}>
                 <Typography variant='h5'>Asialink Finance Corporation</Typography>
                 <Typography>SEC Registration No.: A199711768</Typography>
@@ -44,11 +46,11 @@ export default function Footer() {
             <Grid item xs={12} sm={6} md={6} lg={2} sx={{ textAlign: 'center' }}>
                 <img src={DPO} style={{ maxWidth: '110px', maxHeight: '165px', width: '100%', height: '100%' }} alt="DPO Logo" />
             </Grid>
-            <Hidden only='sm'>
+            <Hidden only='md'>
                 <Grid item xs={12}>
                     <Divider sx={{
                         borderBottomWidth: 1,
-                        borderColor: '#00237D', 
+                        borderColor: '#00237D',
                         margin: '20px 0'
                     }} />
                 </Grid>
@@ -75,13 +77,7 @@ export default function Footer() {
                 </Grid>
             </Grid>
             <Hidden only='xl'>
-                <Grid item xs={12}>
-                <Divider sx={{
-                        borderBottomWidth: 1,
-                        borderColor: '#00237D', 
-                        margin: '20px 0'
-                    }} />
-                </Grid>
+
             </Hidden>
             <Grid container item xs={12} sm={6} lg={4}>
                 <Grid item xs={6}>
@@ -153,5 +149,6 @@ export default function Footer() {
                 </List>
             </Grid>
         </Grid>
+
     );
 }
