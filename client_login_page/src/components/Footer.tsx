@@ -42,20 +42,12 @@ export default function Footer() {
             </Grid>
 
             <Grid item xs={12} sm={6} md={6} lg={4} sx={{ textAlign: 'center' }}>
-                <img src={DPO} style={{ maxWidth: '110px', maxHeight: '165px', width: '100%', height: '100%' }} alt="DPO Logo" />
+                <img src={DPO} style={{ maxWidth: '170px', maxHeight: '250px', width: '100%', height: '100%' }} alt="DPO Logo" />
             </Grid>
-            <Hidden only='md'>
-                <Grid item xs={12}>
-                    <Divider sx={{
-                        borderBottomWidth: 1,
-                        borderColor: '#00237D',
-                        margin: '20px 0'
-                    }} />
-                </Grid>
-            </Hidden>
-            <Grid item xs={12} sm={6} md={6} lg={2}>
-                <Box sx={{ width: '100%', bgcolor: '#00237D', textAlign: 'center', p: 2 }}>
-                    <img src={Logo} style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto' }} alt="Company Logo" />
+
+            <Grid item xs={12} sm={6} md={6} lg={4}>
+                <Box sx={{ bgcolor: '#00237D', textAlign: 'center', height: '150px', mx: 5, mt: 4}}>
+                    <img src={Logo} style={{ maxWidth: '300px', width: '100%', height: '100%', padding:'20px'}} alt="Company Logo" />
                 </Box>
                 <Grid
                     container
@@ -75,7 +67,13 @@ export default function Footer() {
                 </Grid>
             </Grid>
             <Hidden only='xl'>
-
+                <Grid item xs={12}>
+                    <Divider sx={{
+                        borderBottomWidth: 1,
+                        borderColor: '#00237D',
+                        margin: '20px 0'
+                    }} />
+                </Grid>
             </Hidden>
             <Grid container item xs={12} sm={6} lg={4}>
                 <Grid item xs={6}>

@@ -1,30 +1,30 @@
 import * as React from 'react';
-import { Box, Typography, Button, Grid, Link } from '@mui/material';
+import { Box, Typography, Button, Grid } from '@mui/material';
 
-
-interface OTPprops{
+interface OTPprops {
     onForgetPassword: () => void;
     onResetPassword: () => void;
 }
 
-export default function OTPCard({onForgetPassword, onResetPassword}:OTPprops) {
-
+export default function OTPCard({ onForgetPassword, onResetPassword }: OTPprops) {
     const [otp, setOtp] = React.useState(['', '', '', '', '']);
-    const [countdown, setCountdown] = React.useState(30);
-    const [isCountdownActive, setIsCountdownActive] = React.useState(false);
+    const [countdown, setCountdown] = React.useState(30); // Initial countdown to 30 seconds
+    const [isCountdownActive, setIsCountdownActive] = React.useState(true); // Countdown starts immediately
 
+    // Countdown logic
     React.useEffect(() => {
         if (isCountdownActive && countdown > 0) {
             const timer = setInterval(() => {
                 setCountdown((prevCountdown) => prevCountdown - 1);
             }, 1000);
+
             return () => clearInterval(timer);
         } else if (countdown === 0) {
             setIsCountdownActive(false);
         }
     }, [isCountdownActive, countdown]);
 
-    const handleChange = (index, event) => {
+    const handleChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
 
         if (/^[0-9]*$/.test(value) && value.length <= 1) {
@@ -33,27 +33,26 @@ export default function OTPCard({onForgetPassword, onResetPassword}:OTPprops) {
             setOtp(newOtp);
 
             if (value && index < otp.length - 1) {
-                document.getElementById(`otp-input-${index + 1}`).focus();
+                document.getElementById(`otp-input-${index + 1}`)?.focus();
             }
         }
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
         console.log('OTP:', otp.join(''));
-        // Here you can add logic to verify the OTP
         onResetPassword();
     };
 
+
     const handleResendOtp = () => {
         setCountdown(30);
-        setIsCountdownActive(true);
-        // Here you can add logic to resend the OTP
+        setIsCountdownActive(true); // Activate the countdown again
     };
 
     return (
         <Box>
-            <Typography variant="h5" sx={{ mb: 5}} gutterBottom>
+            <Typography variant="h5" sx={{ mb: 5 }} gutterBottom>
                 Enter Security Code
             </Typography>
             <form onSubmit={handleSubmit}>
@@ -66,6 +65,7 @@ export default function OTPCard({onForgetPassword, onResetPassword}:OTPprops) {
                                 value={digit}
                                 onChange={(e) => handleChange(index, e)}
                                 maxLength={1}
+                                placeholder="-"
                                 style={{
                                     width: '40px',
                                     height: '40px',
@@ -74,26 +74,31 @@ export default function OTPCard({onForgetPassword, onResetPassword}:OTPprops) {
                                     margin: '0 5px',
                                     border: '1px solid #ccc',
                                     borderRadius: '4px',
+                                    
                                 }}
                             />
                         </Grid>
                     ))}
                 </Grid>
                 <Typography variant="body2" sx={{ mt: 2, textAlign: 'center' }}>
-                {isCountdownActive ? (
-                    <span>Resend OTP in {countdown} seconds</span>
-                ) : (
-                    <Button onClick={handleResendOtp} disabled={isCountdownActive}>
-                        Resend OTP
+                    {isCountdownActive ? (
+                      <Typography>
+                      Resend OTP in <Typography color='primary' component="span" sx={{ fontWeight: 'bold'}}>{countdown}</Typography> seconds
+                    </Typography>
+                    ) : (
+                        <Button onClick={handleResendOtp} disabled={isCountdownActive}>
+                            Resend OTP
+                        </Button>
+                    )}
+                </Typography>
+                <Box sx={{ textAlign: 'end', mt: 2 }}>
+                    <Button variant="outlined" onClick={onForgetPassword} sx={{ mx: 2 }}>
+                        Cancel
                     </Button>
-                )}
-            </Typography>
-            <Box sx={{ textAlign: 'end', mt: 2}}>
-                <Button variant='outlined' onClick={onForgetPassword} sx={{ mx: 2}}>Cancel</Button>
-                <Button type="submit" variant="contained" color="primary">
-                    Verify OTP
-                </Button>
-            </Box>
+                    <Button type="submit" variant="contained" color="primary">
+                        Verify OTP
+                    </Button>
+                </Box>
             </form>
         </Box>
     );

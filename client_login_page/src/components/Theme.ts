@@ -5,7 +5,7 @@ import BgPng from '../assets/images/bg-design 2.png';
 const theme = createTheme({
     typography: {
         fontFamily: 'Poppins, Arial, sans-serif',
-        fontSize: 16, 
+        fontSize: 12, 
         h1: {
             fontSize: '2rem',
             fontWeight: 600,

@@ -49,19 +49,19 @@ const steps = [
         description: `Please provide your complete address.`,
         type: 'mixform',
         fields: [
-            {label: 'Select Region', name: 'region', type: 'select', options: ['sample', 'sample'], value: ''},
-            {label: 'Select Province', name: 'province', type: 'select', options: ['sample', 'sample'], value: ''},
-            {label: 'Select City/Municipality', name: 'city', type: 'select', options: ['sample', 'sample'], value: ''},
-            {label: 'Select Barangay', name: 'barangay', type: 'select', options: ['sample', 'sample'], value: ''},
-            {label: 'Postal Code', name: 'postalCode', type: 'text', value: '' },
-            {label: 'Street Name/ subdivision', name: 'street', type: 'text', value: ''}
+            { label: 'Select Region', name: 'region', type: 'select', options: ['sample', 'sample'], value: '' },
+            { label: 'Select Province', name: 'province', type: 'select', options: ['sample', 'sample'], value: '' },
+            { label: 'Select City/Municipality', name: 'city', type: 'select', options: ['sample', 'sample'], value: '' },
+            { label: 'Select Barangay', name: 'barangay', type: 'select', options: ['sample', 'sample'], value: '' },
+            { label: 'Postal Code', name: 'postalCode', type: 'text', value: '' },
+            { label: 'Street Name/ subdivision', name: 'street', type: 'text', value: '' }
         ]
     },
 
     {
         label: 'Set Username and Password',
         description: `Set a username and password for your account.`,
-        type: 'form',
+        type: 'setupform',
         fields: [
             { label: 'Username', type: 'text', value: '' },
             { label: 'Password', type: 'password', value: '' },
@@ -204,6 +204,57 @@ export default function Signup({ onToggle }: SignupProps) {
         }, 2000);
     };
 
+    const [usernameError, setUsernameError] = React.useState('');
+    const [passwordError, setPasswordError] = React.useState('');
+
+
+    const validateUsername = (username: string) => {
+        return username.length >= 5;
+    };
+    
+    const validatePassword = (password: string) => {
+        const regex = /^(?=.*[0-9])(?=.*[A-Z]).{8,}$/;
+        return regex.test(password);
+    };
+
+    const handleInputSetUpChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+
+
+        setFormValues((prevValues) => ({
+            ...prevValues,
+            [name]: value,
+        }));
+
+
+        if (name === 'username') {
+            if (!validateUsername(value)) {
+                setUsernameError('Username is already taken or invalid.');
+            } else {
+                setUsernameError('');
+                setUsernameSuccess('Username is valid.');
+            }
+        }
+
+
+        if (name === 'password') {
+            if (!validatePassword(value)) {
+                setPasswordError('Password must be at least 8 characters long, contain a capital letter and a number.');
+            } else {
+                setPasswordError('');
+            }
+        }
+
+        // Clear password confirmation error if password changes
+        if (name === 'confirmPassword') {
+            if (value !== formValues.password) {
+                setPasswordError('Passwords do not match.');
+            } else {
+                setPasswordError('');
+            }
+        }
+    };
+
 
     return (
         <Box >
@@ -297,7 +348,6 @@ export default function Signup({ onToggle }: SignupProps) {
                                     </Box>
                                 </Box>
                             )}
-
                             {step.type === 'form' && step.fields && (
                                 <Box component="form">
                                     {step.fields.map((field, fieldIndex) => (
@@ -330,6 +380,42 @@ export default function Signup({ onToggle }: SignupProps) {
                                 </Box>
                             )}
 
+                            {step.type === 'setupform' && step.fields && (
+                                <Box component="form">
+                                    {step.fields.map((field, fieldIndex) => (
+                                        <div key={fieldIndex}>
+                                            <TextField
+                                                label={field.label}
+                                                type={field.type}
+                                                name={field.label.toLowerCase().replace(' ', '')}
+                                                value={formValues[field.label.toLowerCase().replace(' ', '')] as string}
+                                                onChange={handleInputSetUpChange}
+                                                fullWidth
+                                                sx={{ mb: 2 }}
+                                                error={field.label === 'Username' && !!usernameError || field.label === 'Password' && !!passwordError}
+                                                helperText={field.label === 'Username' ? usernameError : field.label === 'Password' ? passwordError : ''}
+                                            />
+                                        </div>
+                                    ))}
+                                    <Button
+                                        variant="contained"
+                                        onClick={showVerificationCodeField ? handleVerificationCodeSubmit : handleNext}
+                                        sx={{ mt: 1, mr: 1 }}
+                                        disabled={activeStep === 2 && !showVerificationCodeField || !!usernameError || !!passwordError}
+                                    >
+                                        Continue
+                                    </Button>
+                                    <Button
+                                        disabled={index === 0}
+                                        onClick={handleBack}
+                                        sx={{ mt: 1, mr: 1 }}
+                                    >
+                                        Back
+                                    </Button>
+                                </Box>
+                            )}
+
+
                             {step.type === 'mixform' && step.fields && (
                                 <Box component="form">
                                     {step.fields.map((field, fieldIndex) => (
@@ -339,7 +425,7 @@ export default function Signup({ onToggle }: SignupProps) {
                                                 <Select
                                                     name={field.label.toLowerCase().replace(' ', '')}
                                                     value={formValues[field.label.toLowerCase().replace(' ', '')] as string}
-                                                    onChange={handleSelectChange}  
+                                                    onChange={handleSelectChange}
                                                     autoWidth
                                                     label={field.label}
                                                 >
@@ -347,7 +433,7 @@ export default function Signup({ onToggle }: SignupProps) {
                                                         <em>None</em>
                                                     </MenuItem>
                                                     {field.options?.map((option, optionIndex) => (
-                                                        <MenuItem  key={optionIndex} value={option}>
+                                                        <MenuItem key={optionIndex} value={option}>
                                                             {option}
                                                         </MenuItem>
                                                     ))}
@@ -434,10 +520,9 @@ export default function Signup({ onToggle }: SignupProps) {
             )}
             <Modal open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
                 <Box sx={{ p: 3, bgcolor: 'white', borderRadius: 3, maxWidth: 500, margin: 'auto', mt: '20%', textAlign: 'center' }}>
-                    <CheckCircleIcon sx={{ fontSize: 100, color: '#4caf50' }} />
-                    <Typography variant="h4" component="h2" sx={{ color: '#4caf50' }}>Success</Typography>
+                    <CheckCircleIcon sx={{ fontSize: 100, color: '#00237D' }} />
+                    <Typography variant="h4" component="h2" color="primary">Success</Typography>
                     <Typography sx={{ mt: 2 }}>You can now log in</Typography>
-
                 </Box>
             </Modal>
         </Box>

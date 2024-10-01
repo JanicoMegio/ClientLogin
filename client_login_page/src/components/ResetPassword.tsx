@@ -58,7 +58,7 @@ export default function ResetPassword({ onForgetPassword, onToggle }: ResetPassw
                     value={password}
                     onChange={handlePasswordChange}
                     fullWidth
-                    sx={{ mb: 2 }}
+                    sx={{ mb: 2}}
                 />
                 <TextField
                     label="Confirm Password"
