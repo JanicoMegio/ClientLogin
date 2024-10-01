@@ -24,26 +24,24 @@ import Hidden from '@mui/material/Hidden';
 
 export default function Footer() {
     return (
-        <Grid container spacing={1} sx={{ bgcolor: '#ffffff', flexGrow: 1, px: 5, py: 3, width: '100%'}}>
-        
-            <Grid item xs={12} md={6} lg={3}>
+        <Grid container spacing={1} sx={{ bgcolor: '#ffffff', flexGrow: 1, px: 5, py: 3, m: 0, width: '100%'}}>
+                <Grid item xs={12} md={6} lg={4}>
                 <Typography variant='h5'>Asialink Finance Corporation</Typography>
-                <Typography>SEC Registration No.: A199711768</Typography>
                 <br />
+                <Typography>SEC Registration No.: A199711768</Typography>
                 <Typography>CGFD 0967-365-7324 / 0926-017-0248</Typography>
                 <Typography>FLCD 8818-5990</Typography>
             </Grid>
 
-            <Grid item xs={12} md={6} lg={7}>
+            <Grid item xs={12} md={6} lg={4}>
                 <Typography variant='h5'>Advisory:</Typography>
                 <br />
-
                 <Typography>
                     Welcome to Asialink Finance Corporation’s portal. By accessing this website, you agree to be governed by the Terms and Conditions and Data Privacy Policy herein set forth. If you find the Terms and Conditions and Data Privacy Policy unacceptable, kindly discontinue accessing this website. We advise you to study the Terms and Conditions in the disclosure statements before proceeding with the loan transaction.
                 </Typography>
             </Grid>
 
-            <Grid item xs={12} sm={6} md={6} lg={2} sx={{ textAlign: 'center' }}>
+            <Grid item xs={12} sm={6} md={6} lg={4} sx={{ textAlign: 'center' }}>
                 <img src={DPO} style={{ maxWidth: '110px', maxHeight: '165px', width: '100%', height: '100%' }} alt="DPO Logo" />
             </Grid>
             <Hidden only='md'>

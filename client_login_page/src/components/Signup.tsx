@@ -18,6 +18,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
+
 const steps = [
     {
         label: 'Do you have an existing application with us?',
@@ -48,12 +49,12 @@ const steps = [
         description: `Please provide your complete address.`,
         type: 'mixform',
         fields: [
-            { label: 'Address Line 1', name: 'addressLine1', type: 'text', value: '' },
-            { label: 'Address Line 2', name: 'addressLine2', type: 'text', value: '' },
-            { label: 'City', name: 'city', type: 'text', value: '' },
-            { label: 'State', name: 'state', type: 'select', options: ['New Yorkssdsdsdssdsssss', 'California', 'Texas'], value: '' },
-            {label: 'Barangay', name: 'Brgy', type: 'select', options: ['Quiasdsao', 'Jalajala', 'Hulo'], value: ''},
-            { label: 'Postal Code', name: 'postalCode', type: 'text', value: '' }
+            {label: 'Select Region', name: 'region', type: 'select', options: ['sample', 'sample'], value: ''},
+            {label: 'Select Province', name: 'province', type: 'select', options: ['sample', 'sample'], value: ''},
+            {label: 'Select City/Municipality', name: 'city', type: 'select', options: ['sample', 'sample'], value: ''},
+            {label: 'Select Barangay', name: 'barangay', type: 'select', options: ['sample', 'sample'], value: ''},
+            {label: 'Postal Code', name: 'postalCode', type: 'text', value: '' },
+            {label: 'Street Name/ subdivision', name: 'street', type: 'text', value: ''}
         ]
     },
 

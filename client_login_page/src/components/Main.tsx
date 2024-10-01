@@ -1,4 +1,4 @@
-// Main.js
+
 import * as React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
@@ -31,9 +31,9 @@ export default function Main() {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    minHeight: '100vh',
-                    paddingBottom: '64px',
-                    paddingTop: '32px',
+                    minHeight: '70vh',
+                    paddingBottom: '30px',
+                    paddingTop: '20px',
                 }}
             >
                 <Grid container justifyContent="center" alignItems="center" sx={{ flexGrow: 1 }}>
@@ -43,7 +43,7 @@ export default function Main() {
                         </Box>
                     </Grid>
                     <Grid item xs={12} sm={6} md={6} lg={6}>
-                        <Card sx={{ maxWidth: 500, padding: 2, boxShadow: 3, borderRadius: 2 }}>
+                        <Card sx={{ maxWidth: 450, padding: 2, boxShadow: 3, borderRadius: 2 }}>
                             <CardContent>
                                 {currentView === 'signIn' && (
                                     <LoginCard onToggle={showSignUp} onForgetPassword={showForgetPassword} />

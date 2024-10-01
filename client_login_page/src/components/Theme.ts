@@ -1,11 +1,11 @@
 // theme.ts
 import { createTheme } from '@mui/material/styles';
-import BgPng from '../assets/images/bg-design 2.png'; // Ensure to import your background image
+import BgPng from '../assets/images/bg-design 2.png';
 
 const theme = createTheme({
     typography: {
-        fontFamily: 'Poppins, Arial, sans-serif', // Set Poppins as the default font
-        fontSize: 16, // Base font size
+        fontFamily: 'Poppins, Arial, sans-serif',
+        fontSize: 16, 
         h1: {
             fontSize: '2rem',
             fontWeight: 600,
@@ -37,9 +37,7 @@ const theme = createTheme({
                 body: {
                     backgroundImage: `url(${BgPng})`,
                     backgroundRepeat: 'no-repeat',
-                    backgroundSize: 'cover',
-                    height: '300px',
-                    width: '100vw',
+                    backgroundSize: '100% auto',
                     backgroundColor: '#00237D',
                 },
             },
