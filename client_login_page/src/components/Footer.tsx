@@ -46,7 +46,7 @@ export default function Footer() {
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={6} lg={4} sx={{ textAlign: 'center' }}>
-                        <img src={DPO} style={{ maxWidth: '170px', maxHeight: '250px', width: '100%', height: '100%' }} alt="DPO Logo" />
+                        <img src={DPO} style={{ maxWidth: '170px', maxHeight: '270px', width: '100%', height: '100%' }} alt="DPO Logo" />
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={6} lg={4}>
