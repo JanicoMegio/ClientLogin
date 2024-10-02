@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Box, Typography, Button, Grid } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 
 interface OTPprops {
     onForgetPassword: () => void;
@@ -8,8 +9,8 @@ interface OTPprops {
 
 export default function OTPCard({ onForgetPassword, onResetPassword }: OTPprops) {
     const [otp, setOtp] = React.useState(['', '', '', '', '']);
-    const [countdown, setCountdown] = React.useState(30); // Initial countdown to 30 seconds
-    const [isCountdownActive, setIsCountdownActive] = React.useState(true); // Countdown starts immediately
+    const [countdown, setCountdown] = React.useState(10); 
+    const [isCountdownActive, setIsCountdownActive] = React.useState(true);
 
     // Countdown logic
     React.useEffect(() => {
@@ -41,20 +42,44 @@ export default function OTPCard({ onForgetPassword, onResetPassword }: OTPprops)
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
         console.log('OTP:', otp.join(''));
-        onResetPassword();
+        
+        if (!loading) {
+            setLoading(true);
+        
+            if (timer.current) {
+                clearTimeout(timer.current);
+            }
+            timer.current = setTimeout(() => {
+                setLoading(false);
+            }, 2000);
+    
+            onResetPassword();
+        }
     };
-
 
     const handleResendOtp = () => {
         setCountdown(30);
-        setIsCountdownActive(true); // Activate the countdown again
+        setIsCountdownActive(true)
     };
+
+
+    const [loading, setLoading] = React.useState(false);
+  
+    const timer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+
+    React.useEffect(() => {
+        return () => {
+            clearTimeout(timer.current);
+        };
+    }, []);
 
     return (
         <Box>
-            <Typography variant="h5" sx={{ mb: 5 }} gutterBottom>
+            <Typography variant="h5"  gutterBottom>
                 Enter Security Code
             </Typography>
+            <Typography sx={{ mb: 5 }}>We've sent a code to your email </Typography>
             <form onSubmit={handleSubmit}>
                 <Grid container spacing={1} justifyContent="center">
                     {otp.map((digit, index) => (
@@ -91,13 +116,25 @@ export default function OTPCard({ onForgetPassword, onResetPassword }: OTPprops)
                         </Button>
                     )}
                 </Typography>
-                <Box sx={{ textAlign: 'end', mt: 2 }}>
+                <Box sx={{ textAlign: 'end', mt: 2,  position: 'relative' }}>
                     <Button variant="outlined" onClick={onForgetPassword} sx={{ mx: 2 }}>
                         Cancel
                     </Button>
-                    <Button type="submit" variant="contained" color="primary">
+                    <Button type="submit" variant="contained" color="primary"   disabled={loading}>
                         Verify OTP
                     </Button>
+                    {loading && (
+                    <CircularProgress
+                        size={24}
+                        sx={{
+                            position: 'absolute',
+                            top: '70%',
+                            left: '50%',
+                            marginTop: '-15px',
+                            marginLeft: '-12px',
+                        }}
+                    />
+                )}
                 </Box>
             </form>
         </Box>

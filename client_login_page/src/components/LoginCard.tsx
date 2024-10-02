@@ -4,6 +4,8 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 interface LoginCardProps {
     onToggle: () => void;
@@ -27,12 +29,33 @@ export default function LoginCard({ onToggle, onForgetPassword }: LoginCardProps
         console.log('Password:', password);
     };
 
+    const [loading, setLoading] = React.useState(false);
+  
+    const timer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+
+    React.useEffect(() => {
+        return () => {
+            clearTimeout(timer.current);
+        };
+    }, []);
+
+    const handleButtonClick = () => {
+        if (!loading) {
+            setLoading(true);
+            timer.current = setTimeout(() => {
+                setLoading(false);
+            }, 2000);
+        }
+    };
+
+
     return (
         <Box>
-            <Typography variant="h4" gutterBottom sx={{ mb: 2 }}>
+            <Typography variant="h4" gutterBottom >
                 Login
             </Typography>
-            <Typography>
+            <Typography sx={{ mb: 3 }}>
                 Don't have an account?{' '}
                 <Link href="#" variant="body1" onClick={onToggle}>
                     Sign up
@@ -61,9 +84,27 @@ export default function LoginCard({ onToggle, onForgetPassword }: LoginCardProps
                         Forgot password?
                     </Link>
                 </Box>
-                <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
+
+                <Box sx={{ position: 'relative'}}>
+                <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}
+                    disabled={loading}
+                    onClick={handleButtonClick}>
                     Login
                 </Button>
+                {loading && (
+                    <CircularProgress
+                        size={24}
+                        sx={{
+                            position: 'absolute',
+                            top: '70%',
+                            left: '50%',
+                            marginTop: '-15px',
+                            marginLeft: '-12px',
+                        }}
+                    />
+                )}
+                </Box>
+              
             </form>
         </Box>
     );

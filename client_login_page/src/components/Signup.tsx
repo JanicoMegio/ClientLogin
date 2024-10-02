@@ -19,12 +19,17 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 
+import CircularProgress from '@mui/material/CircularProgress';
+
+
+
 const steps = [
     {
         label: 'Do you have an existing application with us?',
         description: `Choose how you'd like to sign up.`,
         type: 'buttons'
     },
+
     {
         label: 'Personal Information',
         description: `Please fill in your name and email.`,
@@ -44,6 +49,7 @@ const steps = [
         description: `Please confirm your email or mobile number.`,
         type: 'buttons'
     },
+
     {
         label: 'Complete Address',
         description: `Please provide your complete address.`,
@@ -143,6 +149,7 @@ export default function Signup({ onToggle }: SignupProps) {
             setShowVerificationCodeField(true);
         } else {
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
+            console.log(formValues)
         }
     };
 
@@ -177,13 +184,6 @@ export default function Signup({ onToggle }: SignupProps) {
         });
     };
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
-        setFormValues((prevValues) => ({
-            ...prevValues,
-            [name]: value,
-        }));
-    };
 
     const handleVerificationCodeSubmit = () => {
         if (formValues.verificationCode) {
@@ -203,59 +203,84 @@ export default function Signup({ onToggle }: SignupProps) {
             window.location.href = '/login';
         }, 2000);
     };
-
     const [usernameError, setUsernameError] = React.useState('');
     const [passwordError, setPasswordError] = React.useState('');
-
+    const [usernameSuccess, setUsernameSuccess] = React.useState(false);
+    const [passwordSuccess, setPasswordSuccess] = React.useState(false);
+    const [isStepCompleted, setIsStepComplete] = React.useState(false);
 
     const validateUsername = (username: string) => {
         return username.length >= 5;
     };
-    
+
     const validatePassword = (password: string) => {
         const regex = /^(?=.*[0-9])(?=.*[A-Z]).{8,}$/;
         return regex.test(password);
     };
 
+
+    const isStepComplete = () => {
+        const currentStep = steps[activeStep];
+    
+        // Ensure the current step exists and has fields
+        if (currentStep && currentStep.fields) {
+            const stepFields = currentStep.fields;
+    
+            // Check if all fields in the current step are filled
+            return stepFields.every(field => formValues[field.label.toLowerCase().replace(' ', '')] !== '');
+        }
+        return false; // Default to incomplete if no currentStep or fields
+    };
+
+
+    
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+        setFormValues((prevValues) => ({
+            ...prevValues,
+            [name]: value,
+        }));
+        setIsStepComplete(isStepComplete());
+    };
+
     const handleInputSetUpChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
-
 
         setFormValues((prevValues) => ({
             ...prevValues,
             [name]: value,
         }));
 
-
         if (name === 'username') {
             if (!validateUsername(value)) {
                 setUsernameError('Username is already taken or invalid.');
+                setUsernameSuccess(false);
             } else {
                 setUsernameError('');
-                setUsernameSuccess('Username is valid.');
+                setUsernameSuccess(true);  // Username is valid
             }
         }
-
 
         if (name === 'password') {
             if (!validatePassword(value)) {
                 setPasswordError('Password must be at least 8 characters long, contain a capital letter and a number.');
+                setPasswordSuccess(false);
             } else {
                 setPasswordError('');
+                setPasswordSuccess(true);  // Password is valid
             }
         }
 
-        // Clear password confirmation error if password changes
         if (name === 'confirmPassword') {
             if (value !== formValues.password) {
                 setPasswordError('Passwords do not match.');
+                setPasswordSuccess(false);
             } else {
                 setPasswordError('');
             }
         }
     };
-
-
+    
     return (
         <Box >
             <Typography variant='h4' sx={{ mb: 3 }}>Sign Up  <Button onClick={onToggle} sx={{ float: 'right' }}>Back</Button> </Typography>
@@ -334,7 +359,7 @@ export default function Signup({ onToggle }: SignupProps) {
                                         <Button
                                             variant="contained"
                                             onClick={showVerificationCodeField ? handleVerificationCodeSubmit : handleNext}
-                                            disabled={!formValues.confirmationMethod}
+                                            disabled={!formValues.confirmationMethod }
                                             sx={{ mr: 1 }}
                                         >
                                             {showVerificationCodeField ? 'Submit Verification Code' : 'Continue'}
@@ -358,6 +383,7 @@ export default function Signup({ onToggle }: SignupProps) {
                                             name={field.label.toLowerCase().replace(' ', '')}
                                             value={formValues[field.label.toLowerCase().replace(' ', '')] as string}
                                             onChange={handleInputChange}
+                                            required 
                                             fullWidth
                                             sx={{ mb: 2 }}
                                         />
@@ -366,7 +392,7 @@ export default function Signup({ onToggle }: SignupProps) {
                                         variant="contained"
                                         onClick={showVerificationCodeField ? handleVerificationCodeSubmit : handleNext}
                                         sx={{ mt: 1, mr: 1 }}
-                                        disabled={activeStep === 2 && !showVerificationCodeField}
+                                        disabled={activeStep === 2 && !showVerificationCodeField || !isStepCompleted}
                                     >
                                         Continue
                                     </Button>
@@ -382,21 +408,69 @@ export default function Signup({ onToggle }: SignupProps) {
 
                             {step.type === 'setupform' && step.fields && (
                                 <Box component="form">
-                                    {step.fields.map((field, fieldIndex) => (
-                                        <div key={fieldIndex}>
-                                            <TextField
-                                                label={field.label}
-                                                type={field.type}
-                                                name={field.label.toLowerCase().replace(' ', '')}
-                                                value={formValues[field.label.toLowerCase().replace(' ', '')] as string}
-                                                onChange={handleInputSetUpChange}
-                                                fullWidth
-                                                sx={{ mb: 2 }}
-                                                error={field.label === 'Username' && !!usernameError || field.label === 'Password' && !!passwordError}
-                                                helperText={field.label === 'Username' ? usernameError : field.label === 'Password' ? passwordError : ''}
-                                            />
-                                        </div>
-                                    ))}
+                                    <TextField
+                                        label="Username"
+                                        name="username"
+                                        value={formValues.username}
+                                        onChange={handleInputSetUpChange}
+                                        fullWidth
+                                        required 
+                                        sx={{
+                                            mb: 2,
+                                            // Apply green border if success, otherwise default or error
+                                            borderColor: usernameSuccess ? 'green' : 'error.main',
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    borderColor: usernameSuccess ? 'green' : '', // Green border for success
+                                                },
+                                            },
+                                        }}
+                                        error={!!usernameError}
+                                        helperText={usernameError || (usernameSuccess ? 'Username is valid.' : '')}
+                                    />
+
+                                    {/* Password Input */}
+                                    <TextField
+                                        label="Password"
+                                        name="password"
+                                        type="password"
+                                        value={formValues.password}
+                                        onChange={handleInputSetUpChange}
+                                        fullWidth
+                                        sx={{
+                                            mb: 2,
+                                            borderColor: passwordSuccess ? 'green' : 'error.main',
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    borderColor: passwordSuccess ? 'green' : '', // Green border for success
+                                                },
+                                            },
+                                        }}
+                                        error={!!passwordError}
+                                        helperText={passwordError || (passwordSuccess ? 'Password is valid.' : '')}
+                                    />
+
+                                    {/* Confirm Password Input */}
+                                    <TextField
+                                        label="Confirm Password"
+                                        name="confirmPassword"
+                                        type="password"
+                                        value={formValues.confirmPassword}
+                                        onChange={handleInputSetUpChange}
+                                        fullWidth
+                                        sx={{
+                                            mb: 2,
+                                            borderColor: formValues.confirmPassword === formValues.password && passwordSuccess ? 'green' : 'error.main',
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    borderColor: formValues.confirmPassword === formValues.password && passwordSuccess ? 'green' : '', // Green if password matches and is valid
+                                                },
+                                            },
+                                        }}
+                                        error={formValues.confirmPassword !== formValues.password}
+                                        helperText={formValues.confirmPassword !== formValues.password ? 'Passwords do not match.' : ''}
+                                    />
+
                                     <Button
                                         variant="contained"
                                         onClick={showVerificationCodeField ? handleVerificationCodeSubmit : handleNext}
@@ -457,7 +531,7 @@ export default function Signup({ onToggle }: SignupProps) {
                                         variant="contained"
                                         onClick={showVerificationCodeField ? handleVerificationCodeSubmit : handleNext}
                                         sx={{ mt: 1, mr: 1 }}
-                                        disabled={activeStep === 2 && !showVerificationCodeField}
+                                        disabled={activeStep === 2 && !showVerificationCodeField || !isStepCompleted}
                                     >
                                         Continue
                                     </Button>
@@ -521,7 +595,7 @@ export default function Signup({ onToggle }: SignupProps) {
             <Modal open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
                 <Box sx={{ p: 3, bgcolor: 'white', borderRadius: 3, maxWidth: 500, margin: 'auto', mt: '20%', textAlign: 'center' }}>
                     <CheckCircleIcon sx={{ fontSize: 100, color: '#00237D' }} />
-                    <Typography variant="h4" component="h2" color="primary">Success</Typography>
+                    <Typography variant="h5" component="h2" color="primary">Success</Typography>
                     <Typography sx={{ mt: 2 }}>You can now log in</Typography>
                 </Box>
             </Modal>

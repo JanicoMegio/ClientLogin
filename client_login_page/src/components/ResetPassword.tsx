@@ -4,7 +4,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 interface ResetPasswordProps {
     onForgetPassword: () => void;
-    onToggle: () => void; // Callback to navigate to login
+    onToggle: () => void;
 }
 
 export default function ResetPassword({ onForgetPassword, onToggle }: ResetPasswordProps) {
@@ -80,8 +80,7 @@ export default function ResetPassword({ onForgetPassword, onToggle }: ResetPassw
                     Submit
                 </Button>
             </form>
-
-            {/* Modal for confirmation */}
+            
             <Modal
                 open={showModal}
                 onClose={handleCloseModal}
@@ -106,12 +105,11 @@ export default function ResetPassword({ onForgetPassword, onToggle }: ResetPassw
                         textAlign: 'center',
                         color: '#00237D',
                     }}>
+                        <CheckCircleIcon sx={{ fontSize: 100, color: '#00237D' }} />
                         <Typography variant="h6" gutterBottom>
                         Password has changed successfully!
                         </Typography>
-                        <Button onClick={handleCloseModal} sx={{ mt: 2 }}>
-                            <CheckCircleIcon sx={{ fontSize: 75 }} />
-                        </Button>
+                       
 
                     </Box>
                 </Fade>

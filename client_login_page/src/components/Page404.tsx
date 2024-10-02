@@ -20,7 +20,7 @@ export default function Page404() {
             <Box
                 component="img"
                 src={ErrorIcon}
-                alt="Centered Image"
+                alt=""
                 sx={{
                     width: '600px',
                     height: '600px',
