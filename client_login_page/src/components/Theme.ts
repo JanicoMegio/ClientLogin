@@ -25,6 +25,11 @@ const theme = createTheme({
             fontWeight: 700,
             color: '#00237D',
         },
+
+        h6: {
+            fontWeight: 700,
+            color: '#00237D',
+        }
     },
     palette: {
         primary: {

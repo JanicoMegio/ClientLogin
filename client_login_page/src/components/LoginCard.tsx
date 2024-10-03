@@ -5,7 +5,9 @@ import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from '../app/store';
+import { handleChangePassword, handleChangeUN } from '../features/reducers/LoginFormSlice';
 
 interface LoginCardProps {
     onToggle: () => void;
@@ -13,42 +15,30 @@ interface LoginCardProps {
 }
 
 export default function LoginCard({ onToggle, onForgetPassword }: LoginCardProps) {
-    const [login, setLogin] = React.useState('');
-    const [password, setPassword] = React.useState('');
-    const handleLoginChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setLogin(event.target.value);
-    };
 
-    const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setPassword(event.target.value);
-    };
+    const loginCardForm = useSelector((state: RootState) => state.loginForm)
+    const dispatch = useDispatch();
+    // const [login, setLogin] = React.useState('');
+    // const [password, setPassword] = React.useState('');
+    // const handleLoginChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     setLogin(event.target.value);
+    // };
+
+    // const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     setPassword(event.target.value);
+    // };
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log('Login:', login);
-        console.log('Password:', password);
+        setLoading(true);
+        console.log('Login:', loginCardForm.userName);
+        console.log('Password:', loginCardForm.password);
+        setTimeout(() => {
+            setLoading(false);
+        }, 1000);  
     };
 
     const [loading, setLoading] = React.useState(false);
-  
-    const timer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-
-
-    React.useEffect(() => {
-        return () => {
-            clearTimeout(timer.current);
-        };
-    }, []);
-
-    const handleButtonClick = () => {
-        if (!loading) {
-            setLoading(true);
-            timer.current = setTimeout(() => {
-                setLoading(false);
-            }, 2000);
-        }
-    };
-
 
     return (
         <Box>
@@ -65,8 +55,8 @@ export default function LoginCard({ onToggle, onForgetPassword }: LoginCardProps
                 <TextField
                     label="Email or Username"
                     variant="outlined"
-                    value={login}
-                    onChange={handleLoginChange}
+                    value={loginCardForm.userName}
+                    onChange={(e)=>dispatch(handleChangeUN(e))}
                     fullWidth
                     sx={{ marginBottom: 2 }}
                 />
@@ -74,8 +64,8 @@ export default function LoginCard({ onToggle, onForgetPassword }: LoginCardProps
                     label="Password"
                     type="password"
                     variant="outlined"
-                    value={password}
-                    onChange={handlePasswordChange}
+                    value={loginCardForm.password}
+                    onChange={(e)=>dispatch(handleChangePassword(e))}
                     fullWidth
                     sx={{ marginBottom: 2 }}
                 />
@@ -85,26 +75,25 @@ export default function LoginCard({ onToggle, onForgetPassword }: LoginCardProps
                     </Link>
                 </Box>
 
-                <Box sx={{ position: 'relative'}}>
-                <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}
-                    disabled={loading}
-                    onClick={handleButtonClick}>
-                    Login
-                </Button>
-                {loading && (
-                    <CircularProgress
-                        size={24}
-                        sx={{
-                            position: 'absolute',
-                            top: '70%',
-                            left: '50%',
-                            marginTop: '-15px',
-                            marginLeft: '-12px',
-                        }}
-                    />
-                )}
+                <Box sx={{ position: 'relative' }}>
+                    <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}
+                        disabled={loading}>
+                        {loading ? 'Logging in...' : 'Login'}
+                        {loading && (
+                            <CircularProgress
+                                size={24}
+                                sx={{
+                                    color: 'white',  // Color for better visibility
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    marginTop: '-12px',  // Center the spinner vertically
+                                    marginLeft: '-12px',  // Center the spinner horizontally
+                                }}
+                            />
+                        )}
+                    </Button>
                 </Box>
-              
             </form>
         </Box>
     );

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
@@ -17,7 +17,6 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-
 
 import CircularProgress from '@mui/material/CircularProgress';
 
@@ -108,6 +107,14 @@ type FormValuesType = {
 };
 
 export default function Signup({ onToggle }: SignupProps) {
+
+
+    const [countdown, setCountdown] = React.useState(10);
+    const [isCountdownActive, setIsCountdownActive] = React.useState(true);
+
+
+
+
     const [activeStep, setActiveStep] = React.useState(0);
     const [formValues, setFormValues] = React.useState<FormValuesType>({
         lastName: '',
@@ -130,6 +137,12 @@ export default function Signup({ onToggle }: SignupProps) {
     });
 
 
+    const handleResendOtp = () => {
+        setCountdown(30);
+        setIsCountdownActive(true)
+    };
+
+
     const handleSelectChange = (event: SelectChangeEvent) => {
         const { name, value } = event.target;
         setFormValues((prevValues) => ({
@@ -145,8 +158,11 @@ export default function Signup({ onToggle }: SignupProps) {
         if (activeStep === 2 && showVerificationCodeField) {
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
             setShowVerificationCodeField(false);
+
         } else if (activeStep === 2) {
             setShowVerificationCodeField(true);
+            setIsCountdownActive(true);
+
         } else {
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
             console.log(formValues)
@@ -194,15 +210,27 @@ export default function Signup({ onToggle }: SignupProps) {
         }
     };
 
-
     const handleSubmit = () => {
-
         setShowSuccessModal(true);
         setTimeout(() => {
             setShowSuccessModal(false);
             window.location.href = '/login';
         }, 2000);
     };
+
+    useEffect(() => {
+        if (isCountdownActive && countdown > 0) {
+            const timer = setInterval(() => {
+                setCountdown((prevCountdown) => prevCountdown - 1);
+            }, 1000);
+
+            return () => clearInterval(timer);
+        } else if (countdown === 0) {
+            setIsCountdownActive(false);
+            setCountdown(10);
+        }
+    }, [isCountdownActive, countdown]);
+
     const [usernameError, setUsernameError] = React.useState('');
     const [passwordError, setPasswordError] = React.useState('');
     const [usernameSuccess, setUsernameSuccess] = React.useState(false);
@@ -221,19 +249,15 @@ export default function Signup({ onToggle }: SignupProps) {
 
     const isStepComplete = () => {
         const currentStep = steps[activeStep];
-    
-        // Ensure the current step exists and has fields
+
         if (currentStep && currentStep.fields) {
             const stepFields = currentStep.fields;
-    
-            // Check if all fields in the current step are filled
+
             return stepFields.every(field => formValues[field.label.toLowerCase().replace(' ', '')] !== '');
         }
-        return false; // Default to incomplete if no currentStep or fields
+        return false;
     };
 
-
-    
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
         setFormValues((prevValues) => ({
@@ -257,7 +281,7 @@ export default function Signup({ onToggle }: SignupProps) {
                 setUsernameSuccess(false);
             } else {
                 setUsernameError('');
-                setUsernameSuccess(true);  // Username is valid
+                setUsernameSuccess(true);
             }
         }
 
@@ -267,7 +291,7 @@ export default function Signup({ onToggle }: SignupProps) {
                 setPasswordSuccess(false);
             } else {
                 setPasswordError('');
-                setPasswordSuccess(true);  // Password is valid
+                setPasswordSuccess(true);
             }
         }
 
@@ -280,7 +304,7 @@ export default function Signup({ onToggle }: SignupProps) {
             }
         }
     };
-    
+
     return (
         <Box >
             <Typography variant='h4' sx={{ mb: 3 }}>Sign Up  <Button onClick={onToggle} sx={{ float: 'right' }}>Back</Button> </Typography>
@@ -342,7 +366,6 @@ export default function Signup({ onToggle }: SignupProps) {
                                         }
                                         label="Mobile"
                                     />
-
                                     {showVerificationCodeField && (
                                         <TextField
                                             label="Verification Code"
@@ -355,11 +378,23 @@ export default function Signup({ onToggle }: SignupProps) {
                                         />
                                     )}
 
+                                    {showVerificationCodeField && isCountdownActive ? (
+                                        <Typography>
+                                            Resend OTP in <Typography color='primary' component="span" sx={{ fontWeight: 'bold' }}>{countdown}</Typography> seconds
+                                        </Typography>
+                                    ) : (
+                                        showVerificationCodeField && (
+                                            <Button onClick={handleResendOtp} disabled={isCountdownActive}>
+                                                Resend OTP
+                                            </Button>
+                                        )
+                                    )}
+
                                     <Box sx={{ mt: 2 }}>
                                         <Button
                                             variant="contained"
                                             onClick={showVerificationCodeField ? handleVerificationCodeSubmit : handleNext}
-                                            disabled={!formValues.confirmationMethod }
+                                            disabled={!formValues.confirmationMethod}
                                             sx={{ mr: 1 }}
                                         >
                                             {showVerificationCodeField ? 'Submit Verification Code' : 'Continue'}
@@ -383,7 +418,7 @@ export default function Signup({ onToggle }: SignupProps) {
                                             name={field.label.toLowerCase().replace(' ', '')}
                                             value={formValues[field.label.toLowerCase().replace(' ', '')] as string}
                                             onChange={handleInputChange}
-                                            required 
+                                            required
                                             fullWidth
                                             sx={{ mb: 2 }}
                                         />
@@ -414,14 +449,14 @@ export default function Signup({ onToggle }: SignupProps) {
                                         value={formValues.username}
                                         onChange={handleInputSetUpChange}
                                         fullWidth
-                                        required 
+                                        required
                                         sx={{
                                             mb: 2,
-                                            // Apply green border if success, otherwise default or error
+
                                             borderColor: usernameSuccess ? 'green' : 'error.main',
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': {
-                                                    borderColor: usernameSuccess ? 'green' : '', // Green border for success
+                                                    borderColor: usernameSuccess ? 'green' : '',
                                                 },
                                             },
                                         }}
@@ -450,7 +485,6 @@ export default function Signup({ onToggle }: SignupProps) {
                                         helperText={passwordError || (passwordSuccess ? 'Password is valid.' : '')}
                                     />
 
-                                    {/* Confirm Password Input */}
                                     <TextField
                                         label="Confirm Password"
                                         name="confirmPassword"

@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { Typography, Box, TextField, Button, Modal, Backdrop, Fade } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from '../app/store';
+import {HandleNewPassword, HandleConfirmPassword} from '../features/reducers/ForgetPasswordSlice';
+import { useMatch } from '../hooks/isMatch';
+
 
 interface ResetPasswordProps {
     onForgetPassword: () => void;
@@ -8,44 +13,29 @@ interface ResetPasswordProps {
 }
 
 export default function ResetPassword({ onForgetPassword, onToggle }: ResetPasswordProps) {
-    const [password, setPassword] = React.useState('');
-    const [confirmPassword, setConfirmPassword] = React.useState('');
     const [showModal, setShowModal] = React.useState(false);
-    const [error, setError] = React.useState('');
+    const ForgetPassForm = useSelector((state: RootState) => state.ForgetPassForm)
+    const { isMatch, error } = useMatch(ForgetPassForm.newPassword, ForgetPassForm.passwordConfirm, 'Passwords do not match');
+    const dispatch = useDispatch();
 
-    const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setPassword(event.target.value);
-    };
-
-    const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setConfirmPassword(event.target.value);
-    };
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-
-        if (password !== confirmPassword) {
-            setError('Passwords do not match');
-            return;
+        
+        if(!isMatch){
+            return 
         }
-
-        setError('');
         setShowModal(true);
-        console.log('Password:', password);
-        console.log('Confirm Password:', confirmPassword);
-
-
         setTimeout(() => {
             handleCloseModal();
         }, 3000);
-
     };
 
     const handleCloseModal = () => {
         setShowModal(false);
         onToggle();
     };
-
+    
     return (
         <Box sx={{ p: 3 }}>
             <Typography variant="h5" gutterBottom>
@@ -55,16 +45,16 @@ export default function ResetPassword({ onForgetPassword, onToggle }: ResetPassw
                 <TextField
                     label="Password"
                     type="password"
-                    value={password}
-                    onChange={handlePasswordChange}
+                    value={ForgetPassForm.newPassword}
+                    onChange={(e) => dispatch(HandleNewPassword(e.target.value))}
                     fullWidth
                     sx={{ mb: 2}}
                 />
                 <TextField
                     label="Confirm Password"
                     type="password"
-                    value={confirmPassword}
-                    onChange={handleConfirmPasswordChange}
+                    value={ForgetPassForm.passwordConfirm}
+                    onChange={(e) => dispatch(HandleConfirmPassword(e.target.value))}
                     fullWidth
                     sx={{ mb: 2 }}
                 />
@@ -76,7 +66,7 @@ export default function ResetPassword({ onForgetPassword, onToggle }: ResetPassw
                 <Button onClick={onForgetPassword} variant="outlined" sx={{ mr: 2 }}>
                     Cancel
                 </Button>
-                <Button type="submit" variant="contained" color="primary">
+                <Button type="submit" variant="contained" color="primary" disabled={!isMatch}>
                     Submit
                 </Button>
             </form>
@@ -107,10 +97,8 @@ export default function ResetPassword({ onForgetPassword, onToggle }: ResetPassw
                     }}>
                         <CheckCircleIcon sx={{ fontSize: 100, color: '#00237D' }} />
                         <Typography variant="h6" gutterBottom>
-                        Password has changed successfully!
+                            Password has changed successfully!
                         </Typography>
-                       
-
                     </Box>
                 </Fade>
             </Modal>

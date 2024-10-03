@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { Box, Typography, Button, Grid } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useLoading } from '../hooks/useLoading';
+
+// todo 
 
 interface OTPprops {
     onForgetPassword: () => void;
@@ -9,10 +12,10 @@ interface OTPprops {
 
 export default function OTPCard({ onForgetPassword, onResetPassword }: OTPprops) {
     const [otp, setOtp] = React.useState(['', '', '', '', '']);
-    const [countdown, setCountdown] = React.useState(10); 
+    const [countdown, setCountdown] = React.useState(10);
     const [isCountdownActive, setIsCountdownActive] = React.useState(true);
+    const { loading, startLoading } = useLoading(1000);
 
-    // Countdown logic
     React.useEffect(() => {
         if (isCountdownActive && countdown > 0) {
             const timer = setInterval(() => {
@@ -25,9 +28,11 @@ export default function OTPCard({ onForgetPassword, onResetPassword }: OTPprops)
         }
     }, [isCountdownActive, countdown]);
 
+    
     const handleChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
 
+      
         if (/^[0-9]*$/.test(value) && value.length <= 1) {
             const newOtp = [...otp];
             newOtp[index] = value;
@@ -37,24 +42,23 @@ export default function OTPCard({ onForgetPassword, onResetPassword }: OTPprops)
                 document.getElementById(`otp-input-${index + 1}`)?.focus();
             }
         }
+
+        if (value === '' && index > 0) {
+            const newOtp = [...otp];
+            newOtp[index] = value;
+            setOtp(newOtp);
+            document.getElementById(`otp-input-${index - 1}`)?.focus();
+        }
     };
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        console.log('OTP:', otp.join(''));
-        
-        if (!loading) {
-            setLoading(true);
-        
-            if (timer.current) {
-                clearTimeout(timer.current);
-            }
-            timer.current = setTimeout(() => {
-                setLoading(false);
-            }, 2000);
-    
+        startLoading();
+        setTimeout(() => {
             onResetPassword();
-        }
+        }, 1000);
+
+
     };
 
     const handleResendOtp = () => {
@@ -63,10 +67,8 @@ export default function OTPCard({ onForgetPassword, onResetPassword }: OTPprops)
     };
 
 
-    const [loading, setLoading] = React.useState(false);
-  
     const timer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-
+    const allFieldsFilled = otp.every((digit) => digit !== '');
 
     React.useEffect(() => {
         return () => {
@@ -76,7 +78,7 @@ export default function OTPCard({ onForgetPassword, onResetPassword }: OTPprops)
 
     return (
         <Box>
-            <Typography variant="h5"  gutterBottom>
+            <Typography variant="h5" gutterBottom>
                 Enter Security Code
             </Typography>
             <Typography sx={{ mb: 5 }}>We've sent a code to your email </Typography>
@@ -92,14 +94,13 @@ export default function OTPCard({ onForgetPassword, onResetPassword }: OTPprops)
                                 maxLength={1}
                                 placeholder="-"
                                 style={{
-                                    width: '40px',
+                                    width: '35px',
                                     height: '40px',
                                     fontSize: '24px',
                                     textAlign: 'center',
                                     margin: '0 5px',
-                                    border: '1px solid #ccc',
-                                    borderRadius: '4px',
-                                    
+                                    border: '1px solid #00237D',
+                                    borderRadius: '2px',
                                 }}
                             />
                         </Grid>
@@ -107,34 +108,35 @@ export default function OTPCard({ onForgetPassword, onResetPassword }: OTPprops)
                 </Grid>
                 <Typography variant="body2" sx={{ mt: 2, textAlign: 'center' }}>
                     {isCountdownActive ? (
-                      <Typography>
-                      Resend OTP in <Typography color='primary' component="span" sx={{ fontWeight: 'bold'}}>{countdown}</Typography> seconds
-                    </Typography>
+                        <Typography>
+                            Resend OTP in <Typography color='primary' component="span" sx={{ fontWeight: 'bold' }}>{countdown}</Typography> seconds
+                        </Typography>
                     ) : (
                         <Button onClick={handleResendOtp} disabled={isCountdownActive}>
                             Resend OTP
                         </Button>
                     )}
                 </Typography>
-                <Box sx={{ textAlign: 'end', mt: 2,  position: 'relative' }}>
+                <Box sx={{ textAlign: 'end', mt: 2, position: 'relative' }}>
                     <Button variant="outlined" onClick={onForgetPassword} sx={{ mx: 2 }}>
                         Cancel
                     </Button>
-                    <Button type="submit" variant="contained" color="primary"   disabled={loading}>
-                        Verify OTP
+                    <Button type="submit" variant="contained" color="primary" disabled={loading || !allFieldsFilled}>
+                        {loading ? 'Verifying OTP' : 'Verify OTP'}
+                        {loading && (
+                            <CircularProgress
+                                size={24}
+                                sx={{
+                                    color: 'white',
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    marginTop: '-12px',
+                                    marginLeft: '-12px',
+                                }}
+                            />
+                        )}
                     </Button>
-                    {loading && (
-                    <CircularProgress
-                        size={24}
-                        sx={{
-                            position: 'absolute',
-                            top: '70%',
-                            left: '50%',
-                            marginTop: '-15px',
-                            marginLeft: '-12px',
-                        }}
-                    />
-                )}
                 </Box>
             </form>
         </Box>
