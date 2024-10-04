@@ -4,6 +4,7 @@ export interface ForgetPassForm{
     email: string;
     newPassword: string;
     passwordConfirm: string;
+
 }
 
 const initialState: ForgetPassForm = {

@@ -1,13 +1,20 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from '../app/store';
-import { handleChangePassword, handleChangeUN } from '../features/reducers/LoginFormSlice';
+import { handleChangePassword, handleChangeUN, toggleShowPassword } from '../features/reducers/LoginFormSlice';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LockIcon from '@mui/icons-material/Lock';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import IconButton from '@mui/material/IconButton';
+
 
 interface LoginCardProps {
     onToggle: () => void;
@@ -24,7 +31,7 @@ export default function LoginCard({ onToggle, onForgetPassword }: LoginCardProps
         setLoading(true);
         setTimeout(() => {
             setLoading(false);
-        }, 1000);  
+        }, 1000);
     };
 
     const [loading, setLoading] = React.useState(false);
@@ -45,18 +52,43 @@ export default function LoginCard({ onToggle, onForgetPassword }: LoginCardProps
                     label="Email or Username"
                     variant="outlined"
                     value={loginCardForm.userName}
-                    onChange={(e)=>dispatch(handleChangeUN(e))}
+                    onChange={(e) => dispatch(handleChangeUN(e.target.value))}
                     fullWidth
                     sx={{ marginBottom: 2 }}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <AccountCircleIcon />
+                            </InputAdornment>
+                        ),
+                    }}
                 />
                 <TextField
                     label="Password"
-                    type="password"
+                    type={loginCardForm.showPassword ? 'text' : 'password'}
                     variant="outlined"
                     value={loginCardForm.password}
-                    onChange={(e)=>dispatch(handleChangePassword(e))}
+                    onChange={(e) => dispatch(handleChangePassword(e.target.value))}
                     fullWidth
                     sx={{ marginBottom: 2 }}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <LockIcon />
+                            </InputAdornment>
+                        ),
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton
+                                    onClick={() => dispatch(toggleShowPassword())} // Dispatch the toggle action
+                                    edge="end"
+                                    aria-label="toggle password visibility"
+                                >
+                                    {loginCardForm.showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                            </InputAdornment>
+                        ),
+                    }}
                 />
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
                     <Link href="#" variant="body2" onClick={onForgetPassword}>

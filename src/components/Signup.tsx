@@ -398,7 +398,7 @@ export default function Signup({ onToggle }: SignupProps) {
                                             disabled={!formValues.confirmationMethod}
                                             sx={{ mr: 1 }}
                                         >
-                                            {showVerificationCodeField ? 'Submit Verification Code' : 'Continue'}
+                                            {showVerificationCodeField ? 'Submit' : 'Continue'}
                                         </Button>
                                         <Button
                                             onClick={handleBack}
